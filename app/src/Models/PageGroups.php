@@ -8,8 +8,20 @@ use Guzaba2\Base\Base;
 
 class PageGroups extends Base
 {
-    public static function get_by_group(?int $parent_page_group_id, int $offset = 0, int $limit = 0): array
+    public static function get_by_page_group_id(?int $parent_page_group_id, int $offset = 0, int $limit = 0): array
     {
-        return Page::get_data_by( ['parent_page_group_id' => $parent_page_group_id], $offset, $limit, $use_like = FALSE, 'page_group_name');
+
+        return PageGroup::get_data_by( ['parent_page_group_id' => $parent_page_group_id], $offset, $limit, $use_like = FALSE, 'page_group_name');
+    }
+
+    public static function get_by_page_group_uuid(?string $parent_page_group_uuid, int $offset = 0, int $limit = 0): array
+    {
+        if ($parent_page_group_uuid) {
+            $PageGroup = new PageGroup($parent_page_group_uuid);
+            $parent_page_group_id = $PageGroup->get_id();
+        } else {
+            $parent_page_group_id = NULL;
+        }
+        return static::get_by_page_group_id($parent_page_group_id, $offset, $limit);
     }
 }

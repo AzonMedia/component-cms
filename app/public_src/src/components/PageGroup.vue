@@ -48,7 +48,7 @@
                         this.$parent.show_toast(err.response.data.message);
                     }).finally( () => {
                         this.page_group_name = '';
-                        this.$parent.get_groups_and_pages();
+                        this.$parent.get_groups_and_pages(this.$parent.page_group_uuid);
                     });
             },
             modal_cancel_handler(bvModalEvent) {

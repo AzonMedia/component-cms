@@ -10,6 +10,9 @@
                     <b-button variant="success" @click="new_page()" size="sm">New Page</b-button>
                     <b-button variant="success" @click="new_group()" size="sm">New Page Group</b-button>
                 </h3>
+                <div v-if="error_message" class="error-message">
+                    {{ error_message }}
+                </div>
             </div>
         </div>
 
@@ -47,6 +50,8 @@
                     modal_title: '',
                     button_title: '',
                 },
+                page_group_uuid: '',
+                error_message: '',
                 //modal_variant: '',
                 //button_variant: '',
                 //action_state: false,
@@ -77,16 +82,50 @@
             proceed_action() {
 
             },
-            get_groups_and_pages() {
+            get_groups_and_pages(page_group_uuid) {
+                console.log(page_group_uuid)
+                this.$http.get('/admin/cms/' + page_group_uuid )
+                    .then(resp => {
+                        console.log(resp);
+                        /*
+                        if (typeof resp.data.files !== "undefined") {
+                            //this will not work - assigning and then setting the property
+                            //the property first needs to be set on all records and then assigned to Files as otherwise the File.vue template will fail
+                            //self.Files = Object.values(resp.data.files);
+                            //this.unhighlight_all_files();
+                            let Files = Object.values(resp.data.files);
+                            for (const el in Files) {
+                                Files[el].is_highlighted = 0;
+                            }
+                            self.Files = Files;
+                        } else {
+                            //console.log('No Files data received');
+                            //self.show_toast('No Files data was received.');
+                            this.error_message = 'No Files data was received.';
+                        }
+                         */
 
+                    })
+                    .catch(err => {
+                        //console.log(err);
+                        //self.show_toast(err.response.data.message);
+                        this.error_message = err.response.data.message;
+                        //self.Files = [];
+                        //self.requestError = err;
+                        //self.items_permissions = [];
+                    }).finally(function(){
+                        //self.$bvModal.show('class-permissions');
+                    });
             }
         },
         mounted() {
-            this.get_groups_and_pages();
+            this.get_groups_and_pages(this.page_group_uuid);
         }
     }
 </script>
 
 <style scoped>
-
+    .error-message {
+        border: 2px solid red;
+    }
 </style>

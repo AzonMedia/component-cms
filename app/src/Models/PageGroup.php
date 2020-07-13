@@ -32,12 +32,40 @@ class PageGroup extends BaseActiveRecord
 
     protected const CONFIG_RUNTIME = [];
 
+    public function get_path(): array
+    {
+        $path = [];
+        $PageGroup = $this;
+        do {
+            $path[] = $PageGroup->page_group_name;
+            $PageGroup = $this->get_parent_page_group();
+        } while ($PageGroup);
+        return $path;
+    }
+
+    public function get_parent_page_group(): ?self
+    {
+        $ret = NULL;
+        if ($this->parent_page_group_id) {
+            $ret = new static($this->parent_page_group_id);
+        }
+        return $ret;
+    }
+
     /**
      * To be used when the paret page group is to be set from public source (front-end)
      * Otherwise parent_page_group_id can be used
      * @var null
      */
     public ?string $parent_page_group_uuid = NULL;
+
+    protected function _after_read(): void
+    {
+        if ($this->parent_page_group_id) {
+            $ParentPageGroup = new static($this->parent_page_group_id);
+            $this->parent_page_group_uuid = $ParentPageGroup->get_uuid();
+        }
+    }
 
     protected function _before_write(): void
     {
@@ -73,6 +101,8 @@ class PageGroup extends BaseActiveRecord
         }
         return NULL;
     }
+
+
 
 
 
