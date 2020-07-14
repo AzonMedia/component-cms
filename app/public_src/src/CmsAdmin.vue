@@ -52,6 +52,8 @@
                 },
                 page_group_uuid: '',
                 error_message: '',
+                page_groups: [],
+                pages: [],
                 //modal_variant: '',
                 //button_variant: '',
                 //action_state: false,
@@ -87,6 +89,7 @@
                 this.$http.get('/admin/cms/' + page_group_uuid )
                     .then(resp => {
                         console.log(resp);
+                        this.page_groups = resp.data.page_groups;
                         /*
                         if (typeof resp.data.files !== "undefined") {
                             //this will not work - assigning and then setting the property
