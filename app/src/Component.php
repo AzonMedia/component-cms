@@ -55,9 +55,12 @@ class Component extends BaseComponent implements ComponentInterface, ComponentIn
             'name'  => 'CMS',
             'meta' => [
                 'in_navigation' => TRUE, //to be shown in the admin navigation
-                'additional_template' => '@GuzabaPlatform.Cms/CmsNavigationHook.vue',//here the list of classes will be expanded
+                //'additional_template' => '@GuzabaPlatform.Cms/CmsNavigationHook.vue',//here the list of classes will be expanded
             ],
         ];
         $FrontendRouter->{'/admin'}->add('cms', '@GuzabaPlatform.Cms/CmsAdmin.vue' ,$additional);
+
+        //$FrontendRouter->{'/admin'}->add('cms/*', '@GuzabaPlatform.Cms/CmsAdmin.vue', $additional);// use with this.$route.params.pathMatch
+        $FrontendRouter->{'/admin'}->add('cms/:page_group_uuid', '@GuzabaPlatform.Cms/CmsAdmin.vue', $additional);// use with this.$route.params.page_group_uuid
     }
 }

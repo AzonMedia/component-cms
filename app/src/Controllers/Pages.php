@@ -38,8 +38,16 @@ class Pages extends BaseController
     public function main(?string $page_group_uuid = NULL): ResponseInterface
     {
         $struct = [];
+
         $struct['page_groups'] = ArrayUtil::remove_columns_by_name(PageGroups::get_by_page_group_uuid($page_group_uuid), '/.*_id/' );
         $struct['pages'] = ArrayUtil::remove_columns_by_name( \GuzabaPlatform\Cms\Models\Pages::get_by_page_group_uuid($page_group_uuid) , '/.*_id/' );
+        if ($page_group_uuid) {
+            $PageGroup = new PageGroup($page_group_uuid);
+            $struct['page_group_path'] = $PageGroup->get_path();
+        } else {
+            $struct['page_group_path'] = [];
+        }
+
         return self::get_structured_ok_response($struct);
     }
 

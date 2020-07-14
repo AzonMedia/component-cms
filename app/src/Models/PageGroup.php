@@ -32,14 +32,19 @@ class PageGroup extends BaseActiveRecord
 
     protected const CONFIG_RUNTIME = [];
 
+    /**
+     * Returns an associative array with page group UUID=>name with the path to this page group
+     * @return array
+     */
     public function get_path(): array
     {
         $path = [];
         $PageGroup = $this;
         do {
-            $path[] = $PageGroup->page_group_name;
+            $path[$PageGroup->get_uuid()] = $PageGroup->page_group_name;
             $PageGroup = $this->get_parent_page_group();
         } while ($PageGroup);
+        $path = array_reverse($path);
         return $path;
     }
 
@@ -99,6 +104,27 @@ class PageGroup extends BaseActiveRecord
                 return new ValidationFailedException($this, 'parent_page_group_id', sprintf(t::_('The provided parent_page_group_id %1$s does not exist.'), $this->parent_page_group_id ));
             }
         }
+        return NULL;
+    }
+
+    protected function _validate_page_group_name(): ?ValidationFailedExceptionInterface
+    {
+        if (!$this->page_group_name) {
+            return new ValidationFailedException($this, 'page_group_name', sprintf(t::_('There is no page_group_name provided.')));
+        }
+        //check for a sibling (page group at the same level) with the same name
+        try {
+            $PageGroup = new static(['parent_page_group_id' => $this->parent_page_group_id, 'page_group_name' => $this->page_group_name]);
+            return new ValidationFailedException($this, 'page_group_name', sprintf(t::_('There is already a Page Group named "%s" at the same level.'), $this->page_group_name) );
+        } catch (RecordNotFoundException $Exception) {
+            //it is OK
+        } catch (PermissionDeniedException $Exception) {
+            //if exception is thrown this is a side channel leak - exposes the information that there is already a page group with the same name but not accessible
+            //SECURITY
+            //return new ValidationFailedException();
+            //so instead of forbidding this it can be allowed (having two page groups with the same name is a UI problem not a technical one)
+        }
+
         return NULL;
     }
 

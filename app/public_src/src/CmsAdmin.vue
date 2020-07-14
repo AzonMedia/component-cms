@@ -7,18 +7,36 @@
             <div id="data">
                 <h3>
                     Groups and Pages
+
+                    <span>/<span class="page-group-path-element" @click="open_page_group('')">Home</span></span>
+                    <!--
+                    <span v-for="(PathElement, index) in page_group_path_arr">/<a href="#" @click="get_groups_and_pages(PathElement.page_group_uuid)">{{PathElement.page_group_name}}</a></span>
+                    -->
+                    <span v-for="(page_group_name, page_group_uuid) in PageGroupPath">/<span class="page-group-path-element" @click="open_page_group(page_group_uuid)">{{page_group_name}}</span></span>
+
                     <b-button variant="success" @click="new_page()" size="sm">New Page</b-button>
                     <b-button variant="success" @click="new_group()" size="sm">New Page Group</b-button>
                 </h3>
+                <div class="page-group-path">
+
+                </div>
                 <div v-if="error_message" class="error-message">
                     {{ error_message }}
+                </div>
+
+                <PageGroupC v-for="(PageGroupData, index) in page_groups" v-bind:PageGroupData="PageGroupData" v-bind:key="PageGroupData.meta_object_uuid" />
+
+                <PageGroupC v-for="(PageData, index) in pages" v-bind:PageData="PageGData" v-bind:key="PageData.meta_object_uuid" />
+
+                <div v-if="!page_groups.length && !pages.length">
+                    There are no page groups or pages.
                 </div>
             </div>
         </div>
 
         <!-- modals -->
-        <PageC v-bind:PageData="PageData"></PageC>
-        <PageGroupC v-bind:PageGroupData="PageGroupData"></PageGroupC>
+        <EditPageC v-bind:PageData="PageData"></EditPageC>
+        <EditPageGroupC v-bind:PageGroupData="PageGroupData"></EditPageGroupC>
     </div>
 
 
@@ -28,6 +46,8 @@
 
     import PageC from '@GuzabaPlatform.Cms/components/Page.vue'
     import PageGroupC from '@GuzabaPlatform.Cms/components/PageGroup.vue'
+    import EditPageC from '@GuzabaPlatform.Cms/components/EditPage.vue'
+    import EditPageGroupC from '@GuzabaPlatform.Cms/components/EditPageGroup.vue'
 
     import ToastMixin from '@GuzabaPlatform.Platform/ToastMixin.js'
 
@@ -39,6 +59,8 @@
         components: {
             PageC,
             PageGroupC,
+            EditPageC,
+            EditPageGroupC,
         },
         data() {
             return {
@@ -54,6 +76,7 @@
                 error_message: '',
                 page_groups: [],
                 pages: [],
+                PageGroupPath: [],
                 //modal_variant: '',
                 //button_variant: '',
                 //action_state: false,
@@ -84,45 +107,46 @@
             proceed_action() {
 
             },
+            open_page_group(page_group_uuid) {
+                if (page_group_uuid) {
+                    this.$router.push('/admin/cms/' + page_group_uuid);
+                } else {
+                    this.$router.push('/admin/cms');
+                }
+
+            },
             get_groups_and_pages(page_group_uuid) {
-                console.log(page_group_uuid)
+                console.log(page_group_uuid);
+                this.page_group_uuid = page_group_uuid;
                 this.$http.get('/admin/cms/' + page_group_uuid )
                     .then(resp => {
                         console.log(resp);
                         this.page_groups = resp.data.page_groups;
-                        /*
-                        if (typeof resp.data.files !== "undefined") {
-                            //this will not work - assigning and then setting the property
-                            //the property first needs to be set on all records and then assigned to Files as otherwise the File.vue template will fail
-                            //self.Files = Object.values(resp.data.files);
-                            //this.unhighlight_all_files();
-                            let Files = Object.values(resp.data.files);
-                            for (const el in Files) {
-                                Files[el].is_highlighted = 0;
-                            }
-                            self.Files = Files;
-                        } else {
-                            //console.log('No Files data received');
-                            //self.show_toast('No Files data was received.');
-                            this.error_message = 'No Files data was received.';
-                        }
-                         */
-
+                        this.pages = resp.data.pages;
+                        this.PageGroupPath = resp.data.page_group_path;
                     })
                     .catch(err => {
-                        //console.log(err);
                         //self.show_toast(err.response.data.message);
                         this.error_message = err.response.data.message;
-                        //self.Files = [];
-                        //self.requestError = err;
-                        //self.items_permissions = [];
                     }).finally(function(){
-                        //self.$bvModal.show('class-permissions');
                     });
             }
         },
+        watch: {
+            $route (to, from) { // needed because by default no class is loaded and when it is loaded the component for the two routes is the same.
+                let page_group_uuid = '';
+                if (typeof this.$route.params.page_group_uuid !== "undefined") {
+                    page_group_uuid = this.$route.params.page_group_uuid
+                }
+                this.get_groups_and_pages(page_group_uuid)
+            }
+        },
         mounted() {
-            this.get_groups_and_pages(this.page_group_uuid);
+            let page_group_uuid = this.page_group_uuid;
+            if (typeof this.$route.params.page_group_uuid !== "undefined") {
+                page_group_uuid = this.$route.params.page_group_uuid
+            }
+            this.get_groups_and_pages(page_group_uuid);
         }
     }
 </script>
@@ -130,5 +154,9 @@
 <style scoped>
     .error-message {
         border: 2px solid red;
+    }
+    .page-group-path-element {
+        cursor: pointer;
+        text-decoration: underline;
     }
 </style>
