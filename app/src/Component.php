@@ -60,6 +60,9 @@ class Component extends BaseComponent implements ComponentInterface, ComponentIn
         ];
         $FrontendRouter->{'/admin'}->add('cms', '@GuzabaPlatform.Cms/CmsAdmin.vue' ,$additional);
 
+        $additional = [
+            'name'  => 'CMS',
+        ];
         //$FrontendRouter->{'/admin'}->add('cms/*', '@GuzabaPlatform.Cms/CmsAdmin.vue', $additional);// use with this.$route.params.pathMatch
         $FrontendRouter->{'/admin'}->add('cms/:page_group_uuid', '@GuzabaPlatform.Cms/CmsAdmin.vue', $additional);// use with this.$route.params.page_group_uuid
     }

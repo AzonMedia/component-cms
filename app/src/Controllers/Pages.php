@@ -6,6 +6,7 @@ namespace GuzabaPlatform\Cms\Controllers;
 
 use Azonmedia\Utilities\ArrayUtil;
 use Azonmedia\Utilities\GeneralUtil;
+use Guzaba2\Authorization\CurrentUser;
 use Guzaba2\Http\Method;
 use GuzabaPlatform\Cms\Models\PageGroup;
 use GuzabaPlatform\Cms\Models\PageGroups;
@@ -31,6 +32,9 @@ class Pages extends BaseController
             ],
             //for retreiving a single page the route set in the Page model is used
         ],
+        'services'      => [
+            'CurrentUser'
+        ]
     ];
 
     protected const CONFIG_RUNTIME = [];
@@ -38,9 +42,11 @@ class Pages extends BaseController
     public function main(?string $page_group_uuid = NULL): ResponseInterface
     {
         $struct = [];
-
-        $struct['page_groups'] = ArrayUtil::remove_columns_by_name(PageGroups::get_by_page_group_uuid($page_group_uuid), '/.*_id/' );
-        $struct['pages'] = ArrayUtil::remove_columns_by_name( \GuzabaPlatform\Cms\Models\Pages::get_by_page_group_uuid($page_group_uuid) , '/.*_id/' );
+        /** @var CurrentUser $CurrentUser */
+        $CurrentUser = self::get_service('CurrentUser');
+        $date_time_format = $CurrentUser->get()->get_date_time_format();
+        $struct['page_groups'] = ArrayUtil::frontify(PageGroups::get_by_page_group_uuid($page_group_uuid),  $date_time_format );
+        $struct['pages'] = ArrayUtil::frontify( \GuzabaPlatform\Cms\Models\Pages::get_by_page_group_uuid($page_group_uuid), $date_time_format );
         if ($page_group_uuid) {
             $PageGroup = new PageGroup($page_group_uuid);
             $struct['page_group_path'] = $PageGroup->get_path();
@@ -54,14 +60,20 @@ class Pages extends BaseController
     public function pages(?string $page_group_uuid = NULL): ResponseInterface
     {
         $struct = [];
-        $struct['pages'] = \GuzabaPlatform\Cms\Models\Pages::get_by_page_group_uuid($page_group_uuid);
+        /** @var CurrentUser $CurrentUser */
+        $CurrentUser = self::get_service('CurrentUser');
+        $date_time_format = $CurrentUser->get()->get_date_time_format();
+        $struct['pages'] = ArrayUtil::frontify( \GuzabaPlatform\Cms\Models\Pages::get_by_page_group_uuid($page_group_uuid), $date_time_format );
         return self::get_structured_ok_response($struct);
     }
 
     public function page_groups(?string $page_group_uuid = NULL): ResponseInterface
     {
         $struct = [];
-        $struct['page_groups'] = PageGroups::get_by_page_group_uuid($page_group_uuid);
+        /** @var CurrentUser $CurrentUser */
+        $CurrentUser = self::get_service('CurrentUser');
+        $date_time_format = $CurrentUser->get()->get_date_time_format();
+        $struct['page_groups'] = ArrayUtil::frontify(PageGroups::get_by_page_group_uuid($page_group_uuid),  $date_time_format );
         return self::get_structured_ok_response($struct);
     }
 }

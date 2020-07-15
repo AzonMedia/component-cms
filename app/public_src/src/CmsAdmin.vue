@@ -24,9 +24,14 @@
                     {{ error_message }}
                 </div>
 
-                <PageGroupC v-for="(PageGroupData, index) in page_groups" v-bind:PageGroupData="PageGroupData" v-bind:key="PageGroupData.meta_object_uuid" />
 
-                <PageGroupC v-for="(PageData, index) in pages" v-bind:PageData="PageGData" v-bind:key="PageData.meta_object_uuid" />
+                <PageGroupC v-for="(PageGroupData, index) in page_groups" v-bind:PageGroupData="PageGroupData" v-bind:key="PageGroupData.meta_object_uuid" />
+                <PageC v-for="(PageData, index) in pages" v-bind:PageData="PageGData" v-bind:key="PageData.meta_object_uuid" />
+
+                <!--
+                <b-table striped show-empty :items="items" :fields="fields" empty-text="No records found!" @row-clicked="row_click_handler" no-local-sorting @sort-changed="sortingChanged" head-variant="dark" table-hover>
+                </b-table>
+                -->
 
                 <div v-if="!page_groups.length && !pages.length">
                     There are no page groups or pages.
