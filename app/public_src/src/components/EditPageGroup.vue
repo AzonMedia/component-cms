@@ -19,7 +19,7 @@
             @show="modal_show_handler"
             size="lg"
     >
-        <p>Page Group name: <input v-model="page_group_name" type="text" placeholder="page group name" /></p>
+        <p>Page Group name: <span v-for="(page_group_name, page_group_uuid) in $parent.PageGroupPath">/{{page_group_name}}</span>/ <input v-model="page_group_name" type="text" placeholder="page group name" /></p>
     </b-modal>
 
 </template>
@@ -40,7 +40,8 @@
                 let url = '/admin/cms/page-group';
                 let SendValues = {};
                 SendValues.page_group_name = this.page_group_name;
-                SendValues.parent_page_group_uuid = null;
+                //SendValues.parent_page_group_uuid = null;
+                SendValues.parent_page_group_uuid = this.$parent.page_group_uuid
                 this.$http.post(url, SendValues).
                     then(function() {
                         //do nothing - in the finally it will reload the pages & groups
