@@ -4,8 +4,12 @@ declare(strict_types=1);
 
 namespace GuzabaPlatform\Cms\Models;
 
+use Azonmedia\Utilities\GeneralUtil;
+use Guzaba2\Authorization\Exceptions\PermissionDeniedException;
 use Guzaba2\Base\Exceptions\InvalidArgumentException;
 use Guzaba2\Orm\ActiveRecordCollection;
+use Guzaba2\Orm\Exceptions\RecordNotFoundException;
+use Guzaba2\Orm\Exceptions\ValidationFailedException;
 use Guzaba2\Orm\Store\Sql\Mysql;
 use GuzabaPlatform\Platform\Application\BaseActiveRecord;
 use GuzabaPlatform\Platform\Application\MysqlConnectionCoroutine;
@@ -27,18 +31,35 @@ class Page extends BaseActiveRecord
 
     protected const CONFIG_RUNTIME = [];
 
-    public string $page_content;
 
-    protected string $original_page_content;
+    /**
+     * To be used when the page group is to be set from public source (front-end)
+     * Otherwise page_group_id can be used
+     * @var ?string
+     */
+    public ?string $page_group_uuid = NULL;
+
+    /**
+     * Used to provide the content to the PageContent object
+     * @var string
+     */
+    public string $page_content = '';
+
+    protected string $original_page_content = '';
 
     protected function _after_read(): void
     {
         //get the latest version for which the user has permission to read
         if (!$this->is_new()) {
             $contents = PageContent::get_data_by( ['page_id' => $this->page_id], $offset = 0,$limit = 1, $use_like = FALSE, $sort_by = 'page_content_id', $sort_desc = TRUE );
-            $this->original_page_content = $this->page_content = $contents[0]['page_content_data'];
-        } else {
-            $this->original_page_content = $this->page_content = '';
+            if (isset($contents[0])) {
+                $this->original_page_content = $this->page_content = $contents[0]['page_content_data'];
+            }
+        }
+
+        if ($this->page_group_id) {
+            $PageGroup = new static($this->page_group_id);
+            $this->page_group_uuid = $PageGroup->get_uuid();
         }
     }
 
@@ -52,10 +73,32 @@ class Page extends BaseActiveRecord
         return $Page;
     }
 
-    protected function _after_save(): void
+    protected function _before_write(): void
+    {
+        if (!$this->page_group_id) {
+            if ($this->page_group_uuid) {
+                if (GeneralUtil::is_uuid($this->page_group_uuid)) {
+                    try {
+                        $PageGroup = new static($this->page_group_uuid);
+                        $this->page_group_id = $PageGroup->get_id();
+                    } catch (RecordNotFoundException $Exception) {
+                        throw new ValidationFailedException($this, 'page_group_uuid', sprintf(t::_('There is no page group with the provided UUID %s.'), $this->page_group_uuid) );
+                    } catch (PermissionDeniedException $Exception) {
+                        throw new ValidationFailedException($this, 'page_group_uuid', sprintf(t::_('You are not allowed to read the page group with UUID %s.'), $this->page_group_uuid) );
+                    }
+                } else {
+                    throw new ValidationFailedException($this, 'page_group_uuid', sprintf(t::_('The provided page group UUID %s is not a valid UUID.'), $this->page_group_uuid) );
+                }
+            } else {
+                $this->page_group_id = NULL;
+            }
+        }
+    }
+
+    protected function _after_write(): void
     {
         //create a new page content only if there was a change
-        if ($this->page_content !== $this->original_page_content) {
+        if ($this->page_content !== $this->original_page_content || $this->was_new()) {
             $PageContent = PageContent::create($this->page_id, $this->page_content);
         }
     }

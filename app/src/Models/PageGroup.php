@@ -32,6 +32,14 @@ class PageGroup extends BaseActiveRecord
 
     protected const CONFIG_RUNTIME = [];
 
+
+    /**
+     * To be used when the parent page group is to be set from public source (front-end)
+     * Otherwise parent_page_group_id can be used
+     * @var ?string
+     */
+    public ?string $parent_page_group_uuid = NULL;
+
     /**
      * Returns an associative array with page group UUID=>name with the path to this page group
      * @return array
@@ -56,13 +64,6 @@ class PageGroup extends BaseActiveRecord
         }
         return $ret;
     }
-
-    /**
-     * To be used when the paret page group is to be set from public source (front-end)
-     * Otherwise parent_page_group_id can be used
-     * @var null
-     */
-    public ?string $parent_page_group_uuid = NULL;
 
     protected function _after_read(): void
     {

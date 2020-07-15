@@ -26,7 +26,7 @@
 
 
                 <PageGroupC v-for="(PageGroupData, index) in page_groups" v-bind:PageGroupData="PageGroupData" v-bind:key="PageGroupData.meta_object_uuid" />
-                <PageC v-for="(PageData, index) in pages" v-bind:PageData="PageGData" v-bind:key="PageData.meta_object_uuid" />
+                <PageC v-for="(PageData, index) in pages" v-bind:PageData="PageData" v-bind:key="PageData.meta_object_uuid" />
 
                 <!--
                 <b-table striped show-empty :items="items" :fields="fields" empty-text="No records found!" @row-clicked="row_click_handler" no-local-sorting @sort-changed="sortingChanged" head-variant="dark" table-hover>
@@ -92,11 +92,11 @@
         },
         methods: {
             new_page() {
-                this.modal_title = 'Create page';
+                this.PageData.modal_title = 'Create page';
                 //this.modal_variant = 'success';
                 //this.button_variant = 'success';
                 //this.actionTitle = 'Create page';
-                this.button_title = 'Create';
+                this.PageData.button_title = 'Create';
                 //this.load_component = 'page';
                 this.$bvModal.show('page-modal');
             },
