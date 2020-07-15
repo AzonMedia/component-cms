@@ -20,7 +20,7 @@ use Guzaba2\Translator\Translator as t;
  * Class NavigationLink
  * @package GuzabaPlatform\Navigation\Models
  * @property int page_group_id
- * @property ?int parent_page_group_id
+ * @property null|int parent_page_group_id
  * @property string page_group_name
  */
 class PageGroup extends BaseActiveRecord

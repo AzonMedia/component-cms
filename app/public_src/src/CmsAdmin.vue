@@ -118,6 +118,8 @@
                 } else {
                     this.$router.push('/admin/cms');
                 }
+            },
+            open_page(page_uuid) {
 
             },
             get_groups_and_pages(page_group_uuid) {

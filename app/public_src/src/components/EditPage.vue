@@ -72,6 +72,7 @@
                 SendValues.page_name = this.page_name;
                 SendValues.page_group_uuid = this.$parent.page_group_uuid
                 SendValues.page_content = this.page_content
+                SendValues.page_slug = this.page_slug
                 this.$http.post(url, SendValues).
                 then(function() {
                     //do nothing - in the finally it will reload the pages & groups

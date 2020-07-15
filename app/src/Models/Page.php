@@ -19,7 +19,7 @@ use Guzaba2\Translator\Translator as t;
  * Class NavigationLink
  * @package GuzabaPlatform\Navigation\Models
  * @property int page_id
- * @property ?int page_group_id
+ * @property null|int page_group_id
  * @property string page_name
  */
 class Page extends BaseActiveRecord
@@ -47,6 +47,14 @@ class Page extends BaseActiveRecord
 
     protected string $original_page_content = '';
 
+    /**
+     * Contains the primary object alias. A page (and any other object) may have more than one alias.
+     * @var ?string
+     */
+    public ?string $page_slug = NULL;
+
+    protected ?string $original_page_slug = NULL;
+
     protected function _after_read(): void
     {
         //get the latest version for which the user has permission to read
@@ -61,6 +69,8 @@ class Page extends BaseActiveRecord
             $PageGroup = new static($this->page_group_id);
             $this->page_group_uuid = $PageGroup->get_uuid();
         }
+
+        $this->page_slug = $this->original_page_slug = $this->get_alias();
     }
 
     public static function create(?int $page_group_id, string $page_name, string $page_content): self
@@ -100,6 +110,16 @@ class Page extends BaseActiveRecord
         //create a new page content only if there was a change
         if ($this->page_content !== $this->original_page_content || $this->was_new()) {
             $PageContent = PageContent::create($this->page_id, $this->page_content);
+        }
+        if ($this->page_slug !== $this->original_page_slug) {
+            //the page slug was changed
+            //delete the old slug
+            if ($this->original_page_slug) {
+                $this->delete_alias($this->original_page_slug);
+            }
+            if ($this->page_slug) {
+                $this->add_alias($this->page_slug);
+            }
         }
     }
 
