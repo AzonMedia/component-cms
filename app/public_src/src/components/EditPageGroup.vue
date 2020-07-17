@@ -42,7 +42,13 @@
                 SendValues.page_group_name = this.page_group_name;
                 //SendValues.parent_page_group_uuid = null;
                 SendValues.parent_page_group_uuid = this.$parent.page_group_uuid
-                this.$http.post(url, SendValues).
+                this.$http(
+                    {
+                        method: this.PageGroupData.method,
+                        url: url,
+                        data: sendValues
+                    }
+                ).
                     then(function() {
                         //do nothing - in the finally it will reload the pages & groups
                     }).catch( err => {
@@ -57,6 +63,9 @@
             },
             modal_show_handler(bvModalEvent) {
                 this.page_group_name = '';
+                if (this.PageGroupData.page_group_name) {
+                    this.page_group_name = this.PageGroupData.page_group_name;
+                }
             }
         }
     }

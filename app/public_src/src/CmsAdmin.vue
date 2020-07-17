@@ -6,7 +6,7 @@
             -->
             <div id="data">
                 <h3>
-                    Groups and Pages
+                    Page Groups and Pages
 
                     <span>/<span class="page-group-path-element" @click="open_page_group('')">Home</span></span>
                     <!--
@@ -42,6 +42,7 @@
         <!-- modals -->
         <EditPageC v-bind:PageData="PageData"></EditPageC>
         <EditPageGroupC v-bind:PageGroupData="PageGroupData"></EditPageGroupC>
+        <DeleteC v-bind:DeleteElement="DeleteElement"></DeleteC>
     </div>
 
 
@@ -53,6 +54,7 @@
     import PageGroupC from '@GuzabaPlatform.Cms/components/PageGroup.vue'
     import EditPageC from '@GuzabaPlatform.Cms/components/EditPage.vue'
     import EditPageGroupC from '@GuzabaPlatform.Cms/components/EditPageGroup.vue'
+    import DeleteC from '@GuzabaPlatform.Cms/components/Delete.vue'
 
     import ToastMixin from '@GuzabaPlatform.Platform/ToastMixin.js'
 
@@ -66,16 +68,26 @@
             PageGroupC,
             EditPageC,
             EditPageGroupC,
+            DeleteC,
         },
         data() {
             return {
                 PageData: {
                     modal_title: '',
                     button_title: '',
+                    page_uuid: null,
                 },
                 PageGroupData: {
                     modal_title: '',
                     button_title: '',
+                    page_group_uuid: null,
+                    page_group_name: '',
+                },
+                DeleteElement: {
+                    modal_title: '',
+                    //button_title: '',
+                    url: '',
+                    name: '',
                 },
                 page_group_uuid: '',
                 error_message: '',
@@ -106,12 +118,11 @@
                 //this.button_variant = 'success';
                 //this.actionTitle = 'Create page group';
                 this.PageGroupData.button_title = 'Create';
+                this.PageGroupData.method = 'post';
                 //this.load_component = 'group';
                 this.$bvModal.show('page-group-modal');
             },
-            proceed_action() {
 
-            },
             open_page_group(page_group_uuid) {
                 if (page_group_uuid) {
                     this.$router.push('/admin/cms/' + page_group_uuid);
@@ -119,9 +130,46 @@
                     this.$router.push('/admin/cms');
                 }
             },
-            open_page(page_uuid) {
+            open_page() {
 
             },
+
+            edit_page_group(page_group_uuid, page_group_name) {
+                this.PageGroupData.modal_title = 'Edit page group ' + page_group_name;
+                this.PageGroupData.button_title = 'Save';
+                this.PageGroupData.page_group_uuid = page_group_uuid;
+                this.PageGroupData.page_group_name = page_group_name;
+                this.PageGroupData.method = 'put';
+                this.$bvModal.show('page-group-modal');
+            },
+            edit_page(page_uuid) {
+
+            },
+
+            permissions_page_group(page_group_uuid) {
+
+            },
+            permissions_page(page_uuid) {
+
+            },
+
+            delete_page_group(page_group_uuid, page_group_name) {
+                this.DeleteElement.modal_title = 'Delete page group ' + page_group_name;
+                //this.DeleteElement.button_title = 'Delete';
+                this.DeleteElement.name = page_group_name;
+                this.DeleteElement.url = 'admin/cms/page-group/' + page_group_uuid;
+                this.DeleteElement.type = 'Page Group';
+                this.$bvModal.show('delete-element-modal');
+            },
+            delete_page(page_uuid) {
+                this.DeleteElement.modal_title = 'Delete page group ' + page_group_name;
+                //this.DeleteElement.button_title = 'Delete';
+                this.DeleteElement.name = page_group_name;
+                this.DeleteElement.url = 'admin/cms/page-group/' + page_group_uuid;
+                this.DeleteElement.type = 'Page Group';
+                this.$bvModal.show('delete-element-modal');
+            },
+
             get_groups_and_pages(page_group_uuid) {
                 console.log(page_group_uuid);
                 this.page_group_uuid = page_group_uuid;
