@@ -132,13 +132,13 @@ class PageGroup extends BaseActiveRecord
     protected function _before_delete(): void
     {
         //delete all contained page groups
-        $page_groups = PageGroup::get_data_by( ['parent_page_group_id' => $this->get_id()] );
+        $page_groups = PageGroup::get_by( ['parent_page_group_id' => $this->get_id()] );
         foreach ($page_groups as $PageGroup) {
             $PageGroup->delete();
         }
 
         //delete all contained pages
-        $pages = Page::get_data_by( ['page_group_id' => $this->get_id()] );
+        $pages = Page::get_by( ['page_group_id' => $this->get_id()] );
         foreach ($pages as $Page) {
             $Page->delete();
         }

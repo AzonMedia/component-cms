@@ -43,6 +43,8 @@
         <EditPageC v-bind:PageData="PageData"></EditPageC>
         <EditPageGroupC v-bind:PageGroupData="PageGroupData"></EditPageGroupC>
         <DeleteC v-bind:DeleteElement="DeleteElement"></DeleteC>
+
+        <CrudC ref="Crud"></CrudC>
     </div>
 
 
@@ -55,6 +57,9 @@
     import EditPageC from '@GuzabaPlatform.Cms/components/EditPage.vue'
     import EditPageGroupC from '@GuzabaPlatform.Cms/components/EditPageGroup.vue'
     import DeleteC from '@GuzabaPlatform.Cms/components/Delete.vue'
+
+    //imported for the permissions modal
+    import CrudC from '@GuzabaPlatform.Crud/CrudAdmin.vue'
 
     import ToastMixin from '@GuzabaPlatform.Platform/ToastMixin.js'
 
@@ -69,6 +74,8 @@
             EditPageC,
             EditPageGroupC,
             DeleteC,
+
+            CrudC,
         },
         data() {
             return {
@@ -146,8 +153,14 @@
 
             },
 
-            permissions_page_group(page_group_uuid) {
-
+            permissions_page_group(page_group_uuid, page_group_name) {
+                let row = {};
+                row.meta_object_uuid = page_group_uuid;
+                row.meta_class_name
+                this.$refs.Crud.selectedClassName = 'GuzabaPlatform\\Cms\\Models\\PageGroup';
+                this.$refs.Crud.selectedObject.meta_object_uuid = page_group_uuid;
+                this.$refs.Crud.showPermissions(row);
+                this.$refs.Crud.title_permissions = 'Permissions for Page Group "' + page_group_name + '"';
             },
             permissions_page(page_uuid) {
 

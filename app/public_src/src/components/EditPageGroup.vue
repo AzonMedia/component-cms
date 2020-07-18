@@ -38,15 +38,18 @@
         methods: {
             modal_ok_handler(bvModalEvent) {
                 let url = '/admin/cms/page-group';
+                if (this.PageGroupData.page_group_uuid) {
+                    url += '/' + this.PageGroupData.page_group_uuid;
+                }
                 let SendValues = {};
                 SendValues.page_group_name = this.page_group_name;
                 //SendValues.parent_page_group_uuid = null;
-                SendValues.parent_page_group_uuid = this.$parent.page_group_uuid
+                SendValues.parent_page_group_uuid = this.$parent.page_group_uuid;
                 this.$http(
                     {
                         method: this.PageGroupData.method,
                         url: url,
-                        data: sendValues
+                        data: SendValues
                     }
                 ).
                     then(function() {
