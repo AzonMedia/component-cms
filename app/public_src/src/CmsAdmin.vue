@@ -44,7 +44,8 @@
         <EditPageGroupC v-bind:PageGroupData="PageGroupData"></EditPageGroupC>
         <DeleteC v-bind:DeleteElement="DeleteElement"></DeleteC>
 
-        <CrudC ref="Crud"></CrudC>
+        <!-- display: none in order to suppress anything that may be shown out-of-the-box from this component -->
+        <CrudC ref="Crud" style="display: none"></CrudC>
     </div>
 
 
@@ -137,8 +138,9 @@
                     this.$router.push('/admin/cms');
                 }
             },
-            open_page() {
-
+            open_page(page_uuid) {
+                //shows a list of page content revisions
+                this.$router.push('/admin/cms/');
             },
 
             edit_page_group(page_group_uuid, page_group_name) {
@@ -156,14 +158,20 @@
             permissions_page_group(page_group_uuid, page_group_name) {
                 let row = {};
                 row.meta_object_uuid = page_group_uuid;
-                row.meta_class_name
+                row.meta_class_name = 'GuzabaPlatform\\Cms\\Models\\PageGroup';//not really needed as the title is overriden
                 this.$refs.Crud.selectedClassName = 'GuzabaPlatform\\Cms\\Models\\PageGroup';
                 this.$refs.Crud.selectedObject.meta_object_uuid = page_group_uuid;
                 this.$refs.Crud.showPermissions(row);
                 this.$refs.Crud.title_permissions = 'Permissions for Page Group "' + page_group_name + '"';
             },
-            permissions_page(page_uuid) {
-
+            permissions_page(page_uuid, page_name) {
+                let row = {};
+                row.meta_object_uuid = page_uuid;
+                row.meta_class_name = 'GuzabaPlatform\\Cms\\Models\\Page';//not really needed as the title is overriden
+                this.$refs.Crud.selectedClassName = 'GuzabaPlatform\\Cms\\Models\\Page';
+                this.$refs.Crud.selectedObject.meta_object_uuid = page_uuid;
+                this.$refs.Crud.showPermissions(row);
+                this.$refs.Crud.title_permissions = 'Permissions for Page Group "' + page_name + '"';
             },
 
             delete_page_group(page_group_uuid, page_group_name) {
@@ -174,12 +182,12 @@
                 this.DeleteElement.type = 'Page Group';
                 this.$bvModal.show('delete-element-modal');
             },
-            delete_page(page_uuid) {
-                this.DeleteElement.modal_title = 'Delete page group ' + page_group_name;
+            delete_page(page_uuid, page_name) {
+                this.DeleteElement.modal_title = 'Delete page ' + page_name;
                 //this.DeleteElement.button_title = 'Delete';
-                this.DeleteElement.name = page_group_name;
-                this.DeleteElement.url = 'admin/cms/page-group/' + page_group_uuid;
-                this.DeleteElement.type = 'Page Group';
+                this.DeleteElement.name = page_name;
+                this.DeleteElement.url = 'admin/cms/page/' + page_uuid;
+                this.DeleteElement.type = 'Page';
                 this.$bvModal.show('delete-element-modal');
             },
 
@@ -226,5 +234,8 @@
     .page-group-path-element {
         cursor: pointer;
         text-decoration: underline;
+    }
+    button {
+        width: 200px;
     }
 </style>

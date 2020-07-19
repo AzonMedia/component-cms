@@ -83,6 +83,30 @@ class Page extends BaseActiveRecord
         return $Page;
     }
 
+    /**
+     * @return PageContent[]
+     * @throws \Azonmedia\Exceptions\InvalidArgumentException
+     * @throws \Guzaba2\Base\Exceptions\RunTimeException
+     * @throws \Guzaba2\Coroutine\Exceptions\ContextDestroyedException
+     * @throws \ReflectionException
+     */
+    public function get_content_revisions(): array
+    {
+        return PageContent::get_by( ['page_id' => $this->get_id()] );
+    }
+
+    /**
+     * @return array
+     * @throws \Azonmedia\Exceptions\InvalidArgumentException
+     * @throws \Guzaba2\Base\Exceptions\RunTimeException
+     * @throws \Guzaba2\Coroutine\Exceptions\ContextDestroyedException
+     * @throws \ReflectionException
+     */
+    public function get_content_revisions_data(): array
+    {
+        return PageContent::get_data_by( ['page_id' => $this->get_id()] );
+    }
+
     protected function _before_write(): void
     {
         if (!$this->page_group_id) {
@@ -128,7 +152,7 @@ class Page extends BaseActiveRecord
         //try to delete all content records before deleting the page
         //this will try to delete all the content records to which it has access
         //if there are remaining content records the deletion of the Page will fail due to the Foreign Key contraint restrict
-        $contents = PageContent::get_data_by( ['page_id' => $this->page_id] );
+        $contents = PageContent::get_by( ['page_id' => $this->page_id] );
         foreach ($contents as $PageContent) {
             $PageContent->delete();
         }

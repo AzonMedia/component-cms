@@ -13,9 +13,24 @@
                 <span class="clickable" @click="$parent.open_page_group(PageGroupData.meta_object_uuid)">{{PageGroupData.page_group_name}}</span>
             </div>
             <div class="col-2">
-                <b-icon-list-check variant="primary" class="clickable" @click="$parent.permissions_page_group(PageGroupData.meta_object_uuid, PageGroupData.page_group_name)"></b-icon-list-check>
-                <b-icon-pencil variant="primary" class="clickable" @click="$parent.edit_page_group(PageGroupData.meta_object_uuid, PageGroupData.page_group_name)"></b-icon-pencil>
-                <b-icon-trash variant="danger" class="clickable" @click="$parent.delete_page_group(PageGroupData.meta_object_uuid, PageGroupData.page_group_name)"></b-icon-trash>
+                <b-icon-list-check
+                        v-b-tooltip.hover title="Page group permissions"
+                        variant="primary"
+                        class="clickable"
+                        @click="$parent.permissions_page_group(PageGroupData.meta_object_uuid, PageGroupData.page_group_name)"
+                ></b-icon-list-check>
+                <b-icon-pencil
+                        v-b-tooltip.hover title="Edit page group"
+                        variant="primary"
+                        class="clickable"
+                        @click="$parent.edit_page_group(PageGroupData.meta_object_uuid, PageGroupData.page_group_name)"
+                ></b-icon-pencil>
+                <b-icon-trash
+                        v-b-tooltip.hover title="Delete page group"
+                        variant="danger"
+                        class="clickable"
+                        @click="$parent.delete_page_group(PageGroupData.meta_object_uuid, PageGroupData.page_group_name)"
+                ></b-icon-trash>
             </div>
         </div>
     </div>
@@ -27,11 +42,6 @@
         props: {
             PageGroupData : Object
         },
-        methods: {
-            hover(a1, a2) {
-
-            }
-        }
     }
 </script>
 

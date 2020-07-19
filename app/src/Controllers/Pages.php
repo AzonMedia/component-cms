@@ -8,6 +8,8 @@ use Azonmedia\Utilities\ArrayUtil;
 use Azonmedia\Utilities\GeneralUtil;
 use Guzaba2\Authorization\CurrentUser;
 use Guzaba2\Http\Method;
+use GuzabaPlatform\Cms\Models\Page;
+use GuzabaPlatform\Cms\Models\PageContent;
 use GuzabaPlatform\Cms\Models\PageGroup;
 use GuzabaPlatform\Cms\Models\PageGroups;
 use GuzabaPlatform\Platform\Application\BaseController;
@@ -31,6 +33,15 @@ class Pages extends BaseController
                 Method::HTTP_GET => [self::class, 'main']
             ],
             //for retreiving a single page the route set in the Page model is used
+            //no - it needs a custom controller because it must show the content revision history
+            //there can be a simplified CMS option where the last revision is always published and it is loaded when the page is opened
+            //it is best on page click to open the last revision this used can access and to have a separate icon for listing revisions
+            '/admin/cms/page/{page_uuid}/revisions/' => [
+                Method::HTTP_GET => [self::class, 'page_revisions'],
+            ],
+            '/admin/cms/page/{page_uuid}/revision/{page_content_uuid}' => [ //the page_uuid is not really needed to access the revision but for future error reporting may be better to have it
+                Method::HTTP_GET => [self::class, 'page_revision'],
+            ],
         ],
         'services'      => [
             'CurrentUser'
@@ -75,5 +86,21 @@ class Pages extends BaseController
         $date_time_format = $CurrentUser->get()->get_date_time_format();
         $struct['page_groups'] = ArrayUtil::frontify(PageGroups::get_by_page_group_uuid($page_group_uuid),  $date_time_format );
         return self::get_structured_ok_response($struct);
+    }
+
+    public function page_revisions(string $page_uuid): ResponseInterface
+    {
+        $Page = new Page($page_uuid);
+        $content_revisions = $Page->get_content_revisions_data();
+        $struct = [];
+        $struct['content_revisions'] = $content_revisions;
+        return self::get_structured_ok_response($struct);
+    }
+
+    public function page_revision(string $page_uuid, string $page_content_uuid): ResponseInterface
+    {
+        $Page = new Page($page_uuid);//the page & page_uuid are not really needed but for structuring API is better to have it
+        $PageContent = new PageContent($page_content_uuid);
+        return self::get_structured_ok_response($PageContent);
     }
 }
