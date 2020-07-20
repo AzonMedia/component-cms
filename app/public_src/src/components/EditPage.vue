@@ -86,10 +86,20 @@
                 });
             },
             modal_cancel_handler(bvModalEvent) {
-                this.page_group_name = '';
+                //this.page_name = '';
             },
             modal_show_handler(bvModalEvent) {
-                this.page_group_name = '';
+                //this.page_name = '';
+                if (this.PageData.page_uuid) {
+                    this.$http.get('/admin/cms/page/' + this.PageData.page_uuid)
+                        .then(resp => {
+                            console.log(resp);
+                        })
+                        .catch(err => {
+
+                        });
+                }
+
             },
             on_editor_blur(quill) {
 

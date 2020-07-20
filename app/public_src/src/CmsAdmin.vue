@@ -4,6 +4,7 @@
             <!--
             <div id="data" class="tab">
             -->
+
             <div id="data">
                 <h3>
                     Page Groups and Pages
@@ -16,6 +17,7 @@
 
                     <b-button variant="success" @click="new_page()" size="sm">New Page</b-button>
                     <b-button variant="success" @click="new_group()" size="sm">New Page Group</b-button>
+
                 </h3>
                 <div class="page-group-path">
 
@@ -118,6 +120,7 @@
                 //this.actionTitle = 'Create page';
                 this.PageData.button_title = 'Create';
                 //this.load_component = 'page';
+                this.PageData.page_name = '';
                 this.$bvModal.show('page-modal');
             },
             new_group() {
@@ -128,6 +131,7 @@
                 this.PageGroupData.button_title = 'Create';
                 this.PageGroupData.method = 'post';
                 //this.load_component = 'group';
+                this.PageGroupData.page_group_name = '';
                 this.$bvModal.show('page-group-modal');
             },
 
@@ -140,7 +144,7 @@
             },
             open_page(page_uuid) {
                 //shows a list of page content revisions
-                this.$router.push('/admin/cms/');
+                this.$router.push('/admin/cms/page/' + page_uuid);
             },
 
             edit_page_group(page_group_uuid, page_group_name) {
@@ -151,8 +155,13 @@
                 this.PageGroupData.method = 'put';
                 this.$bvModal.show('page-group-modal');
             },
-            edit_page(page_uuid) {
-
+            edit_page(page_uuid, page_name) {
+                this.PageData.modal_title = 'Edit page ' + page_name;
+                this.PageData.button_title = 'Save';
+                this.PageData.page_uuid = page_uuid;
+                this.PageData.page_name = page_name;
+                this.PageData.method = 'put';
+                this.$bvModal.show('page-modal');
             },
 
             permissions_page_group(page_group_uuid, page_group_name) {
@@ -196,7 +205,6 @@
                 this.page_group_uuid = page_group_uuid;
                 this.$http.get('/admin/cms/' + page_group_uuid )
                     .then(resp => {
-                        console.log(resp);
                         this.page_groups = resp.data.page_groups;
                         this.pages = resp.data.pages;
                         this.PageGroupPath = resp.data.page_group_path;
@@ -235,7 +243,7 @@
         cursor: pointer;
         text-decoration: underline;
     }
-    button {
-        width: 200px;
-    }
+    /*button {*/
+    /*    width: 200px;*/
+    /*}*/
 </style>

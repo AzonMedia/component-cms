@@ -36,6 +36,7 @@ class Pages extends BaseController
             //no - it needs a custom controller because it must show the content revision history
             //there can be a simplified CMS option where the last revision is always published and it is loaded when the page is opened
             //it is best on page click to open the last revision this used can access and to have a separate icon for listing revisions
+            //a dedicated controller is needed because it needs to return not only the page data but also the content (the last accessible revision)
             '/admin/cms/page/{page_uuid}/revisions/' => [
                 Method::HTTP_GET => [self::class, 'page_revisions'],
             ],

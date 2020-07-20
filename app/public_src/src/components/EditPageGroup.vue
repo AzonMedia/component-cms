@@ -57,7 +57,6 @@
                     }).catch( err => {
                         this.$parent.show_toast(err.response.data.message);
                     }).finally( () => {
-                        this.page_group_name = '';
                         this.$parent.get_groups_and_pages(this.$parent.page_group_uuid);
                     });
             },
@@ -66,6 +65,7 @@
             },
             modal_show_handler(bvModalEvent) {
                 this.page_group_name = '';
+                console.log('QQQQQQQQQQQQ')
                 if (this.PageGroupData.page_group_name) {
                     this.page_group_name = this.PageGroupData.page_group_name;
                 }
