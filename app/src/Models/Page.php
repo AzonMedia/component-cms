@@ -10,6 +10,7 @@ use Guzaba2\Base\Exceptions\InvalidArgumentException;
 use Guzaba2\Orm\ActiveRecordCollection;
 use Guzaba2\Orm\Exceptions\RecordNotFoundException;
 use Guzaba2\Orm\Exceptions\ValidationFailedException;
+use Guzaba2\Orm\Interfaces\ValidationFailedExceptionInterface;
 use Guzaba2\Orm\Store\Sql\Mysql;
 use GuzabaPlatform\Platform\Application\BaseActiveRecord;
 use GuzabaPlatform\Platform\Application\MysqlConnectionCoroutine;
@@ -45,32 +46,29 @@ class Page extends BaseActiveRecord
      */
     public string $page_content = '';
 
-    protected string $original_page_content = '';
-
     /**
      * Contains the primary object alias. A page (and any other object) may have more than one alias.
      * @var ?string
      */
     public ?string $page_slug = NULL;
 
-    protected ?string $original_page_slug = NULL;
-
     protected function _after_read(): void
     {
         //get the latest version for which the user has permission to read
-        if (!$this->is_new()) {
-            $contents = PageContent::get_data_by( ['page_id' => $this->page_id], $offset = 0,$limit = 1, $use_like = FALSE, $sort_by = 'page_content_id', $sort_desc = TRUE );
-            if (isset($contents[0])) {
-                $this->original_page_content = $this->page_content = $contents[0]['page_content_data'];
-            }
+        $contents = PageContent::get_data_by( ['page_id' => $this->page_id], $offset = 0,$limit = 1, $use_like = FALSE, $sort_by = 'page_content_id', $sort_desc = TRUE );
+        if (isset($contents[0]) && !$this->is_property_modified('page_content')) {
+            $this->page_content = $contents[0]['page_content_data'];
         }
 
-        if ($this->page_group_id) {
+        if ($this->page_group_id && !$this->is_property_modified('page_group_uuid') ) {
             $PageGroup = new static($this->page_group_id);
             $this->page_group_uuid = $PageGroup->get_uuid();
         }
 
-        $this->page_slug = $this->original_page_slug = $this->get_alias();
+        //the property may be NULL not because it is not set/initialized but because it was explicitely set to NULL on another instance
+        if (!$this->page_slug && !$this->is_property_modified('page_slug')) {
+            $this->page_slug = $this->get_alias();
+        }
     }
 
     public static function create(?int $page_group_id, string $page_name, string $page_content): self
@@ -109,6 +107,7 @@ class Page extends BaseActiveRecord
 
     protected function _before_write(): void
     {
+
         if (!$this->page_group_id) {
             if ($this->page_group_uuid) {
                 if (GeneralUtil::is_uuid($this->page_group_uuid)) {
@@ -132,14 +131,14 @@ class Page extends BaseActiveRecord
     protected function _after_write(): void
     {
         //create a new page content only if there was a change
-        if ($this->page_content !== $this->original_page_content || $this->was_new()) {
+        if ($this->is_property_modified('page_content') || $this->was_new()) {
             $PageContent = PageContent::create($this->page_id, $this->page_content);
         }
-        if ($this->page_slug !== $this->original_page_slug) {
-            //the page slug was changed
-            //delete the old slug
-            if ($this->original_page_slug) {
-                $this->delete_alias($this->original_page_slug);
+
+        if ($this->is_property_modified('page_slug')) {
+            $original_slug = $this->get_property_original_value('page_slug');
+            if ($original_slug) {
+                $this->delete_alias($original_slug);
             }
             if ($this->page_slug) {
                 $this->add_alias($this->page_slug);
@@ -156,5 +155,29 @@ class Page extends BaseActiveRecord
         foreach ($contents as $PageContent) {
             $PageContent->delete();
         }
+    }
+
+    protected function _validate_page_name(): ?ValidationFailedExceptionInterface
+    {
+        if (!$this->page_name) {
+            return new ValidationFailedException($this, 'page_name', sprintf(t::_('There is no page_name provided.')));
+        }
+
+        //check for a sibling (page group at the same level) with the same name
+        try {
+            $Page = new static(['page_group_id' => $this->page_group_id, 'page_name' => $this->page_name]);
+            if ($Page->get_id() !== $this->get_id()) {
+                return new ValidationFailedException($this, 'page_name', sprintf(t::_('There is already a Page named "%s" at the same level.'), $this->page_name));
+            }
+        } catch (RecordNotFoundException $Exception) {
+            //it is OK
+        } catch (PermissionDeniedException $Exception) {
+            //if exception is thrown this is a side channel leak - exposes the information that there is already a page group with the same name but not accessible
+            //SECURITY
+            //return new ValidationFailedException();
+            //so instead of forbidding this it can be allowed (having two page groups with the same name is a UI problem not a technical one)
+        }
+
+        return NULL;
     }
 }

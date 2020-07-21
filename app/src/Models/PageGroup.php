@@ -116,7 +116,9 @@ class PageGroup extends BaseActiveRecord
         //check for a sibling (page group at the same level) with the same name
         try {
             $PageGroup = new static(['parent_page_group_id' => $this->parent_page_group_id, 'page_group_name' => $this->page_group_name]);
-            return new ValidationFailedException($this, 'page_group_name', sprintf(t::_('There is already a Page Group named "%s" at the same level.'), $this->page_group_name) );
+            if ($PageGroup->get_id() !== $this->get_id()) {
+                return new ValidationFailedException($this, 'page_group_name', sprintf(t::_('There is already a Page Group named "%s" at the same level.'), $this->page_group_name) );
+            }
         } catch (RecordNotFoundException $Exception) {
             //it is OK
         } catch (PermissionDeniedException $Exception) {

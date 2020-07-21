@@ -121,6 +121,7 @@
                 this.PageData.button_title = 'Create';
                 //this.load_component = 'page';
                 this.PageData.page_name = '';
+                this.PageData.page_uuid = null;
                 this.$bvModal.show('page-modal');
             },
             new_group() {
@@ -131,6 +132,7 @@
                 this.PageGroupData.button_title = 'Create';
                 this.PageGroupData.method = 'post';
                 //this.load_component = 'group';
+                this.PageGroupData.page_group_uuid = null;
                 this.PageGroupData.page_group_name = '';
                 this.$bvModal.show('page-group-modal');
             },

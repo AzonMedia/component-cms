@@ -57,6 +57,8 @@
                 page_name: '',
                 page_slug: '',
                 page_content: '',
+                page_group_uuid: '',
+                page_uuid: '',
                 EditorOption: {},
             };
         },
@@ -68,22 +70,37 @@
         methods: {
             modal_ok_handler(bvModalEvent) {
                 let url = '/admin/cms/page';
+                if (this.page_uuid) {
+                    url = '/admin/cms/page/' + this.page_uuid;
+                }
                 let SendValues = {};
                 SendValues.page_name = this.page_name;
-                SendValues.page_group_uuid = this.$parent.page_group_uuid
+                if (!this.page_group_uuid) {
+                    this.page_group_uuid = this.$parent.page_group_uuid;
+                }
+                SendValues.page_group_uuid = this.page_group_uuid;
                 SendValues.page_content = this.page_content
                 SendValues.page_slug = this.page_slug
-                this.$http.post(url, SendValues).
-                then(function() {
-                    //do nothing - in the finally it will reload the pages & groups
-                }).catch( err => {
-                    this.$parent.show_toast(err.response.data.message);
-                }).finally( () => {
-                    this.page_name = '';
-                    this.page_slug = '';
-                    this.page_content = '';
-                    this.$parent.get_groups_and_pages(this.$parent.page_group_uuid);
-                });
+                let method = this.page_uuid ? 'put' : 'post';
+                //this.$http.post(url, SendValues).
+                this.$http(
+                    {
+                        method: method,
+                        url: url,
+                        //data: this.$stringify(sendValues)
+                        data: SendValues
+                    }
+                ).
+                    then(function() {
+                        //do nothing - in the finally it will reload the pages & groups
+                    }).catch( err => {
+                        this.$parent.show_toast(err.response.data.message);
+                    }).finally( () => {
+                        this.page_name = '';
+                        this.page_slug = '';
+                        this.page_content = '';
+                        this.$parent.get_groups_and_pages(this.$parent.page_group_uuid);
+                    });
             },
             modal_cancel_handler(bvModalEvent) {
                 //this.page_name = '';
@@ -94,10 +111,21 @@
                     this.$http.get('/admin/cms/page/' + this.PageData.page_uuid)
                         .then(resp => {
                             console.log(resp);
+                            this.page_name = resp.data.page_name;
+                            this.page_slug = resp.data.page_slug;
+                            this.page_content = resp.data.page_content;
+                            this.page_uuid = resp.data.meta_object_uuid;
+                            this.page_group_uuid = resp.data.page_group_uuid;
                         })
                         .catch(err => {
 
                         });
+                } else {
+                    this.page_name = '';
+                    this.page_slug = '';
+                    this.page_content = '';
+                    this.page_group_uuid = null;
+                    this.page_uuid = '';
                 }
 
             },
