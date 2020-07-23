@@ -15,12 +15,14 @@
                     <span class="clickable" @click="$parent.open_page(PageData.meta_object_uuid)">{{PageData.page_name}}</span>
                 </div>
                 <div class="col-2">
+                    <!--
                     <b-icon-list-ol
                             v-b-tooltip.hover title="Page revisions"
                             variant="primary"
                             class="clickable"
                             @click="$parent.revisions_page(PageData.meta_object_uuid, PageData.page_name)"
                     ></b-icon-list-ol>
+                    -->
                     <b-icon-list-check
                             v-b-tooltip.hover title="Page permissions"
                             variant="primary"

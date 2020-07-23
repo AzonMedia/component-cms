@@ -110,7 +110,6 @@
                 if (this.PageData.page_uuid) {
                     this.$http.get('/admin/cms/page/' + this.PageData.page_uuid)
                         .then(resp => {
-                            console.log(resp);
                             this.page_name = resp.data.page_name;
                             this.page_slug = resp.data.page_slug;
                             this.page_content = resp.data.page_content;
@@ -118,7 +117,7 @@
                             this.page_group_uuid = resp.data.page_group_uuid;
                         })
                         .catch(err => {
-
+                            this.$parent.show_toast(err);
                         });
                 } else {
                     this.page_name = '';
