@@ -7,6 +7,7 @@ use Guzaba2\Base\Exceptions\RunTimeException;
 use GuzabaPlatform\Components\Base\BaseComponent;
 use GuzabaPlatform\Components\Base\Interfaces\ComponentInitializationInterface;
 use GuzabaPlatform\Components\Base\Interfaces\ComponentInterface;
+use GuzabaPlatform\Platform\Application\VueComponentHooks;
 
 /**
  * Class Component
@@ -18,6 +19,7 @@ class Component extends BaseComponent implements ComponentInterface, ComponentIn
     protected const CONFIG_DEFAULTS = [
         'services'      => [
             'FrontendRouter',
+            'FrontendHooks',
         ],
     ];
 
@@ -27,7 +29,7 @@ class Component extends BaseComponent implements ComponentInterface, ComponentIn
     //https://components.platform.guzaba.org/component/{vendor}/{component}
     protected const COMPONENT_URL = 'https://components.platform.guzaba.org/component/guzaba-platform/cms';
     //protected const DEV_COMPONENT_URL//this should come from composer.json
-    protected const COMPONENT_NAMESPACE = 'GuzabaPlatform\\Cms';
+    protected const COMPONENT_NAMESPACE = __NAMESPACE__;
     protected const COMPONENT_VERSION = '0.0.1';//TODO update this to come from the Composer.json file of the component
     protected const VENDOR_NAME = 'Azonmedia';
     protected const VENDOR_URL = 'https://azonmedia.com';
@@ -38,17 +40,18 @@ class Component extends BaseComponent implements ComponentInterface, ComponentIn
      * @return array
      * @throws RunTimeException
      */
-    public static function run_all_initializations() : array
+    public static function run_all_initializations(): array
     {
         self::register_routes();
-        return ['register_routes'];
+        self::register_frontend_hooks();
+        return ['register_routes','register_frontend_hooks'];
     }
 
 
     /**
      * @throws RunTimeException
      */
-    public static function register_routes() : void
+    public static function register_routes(): void
     {
         $FrontendRouter = self::get_service('FrontendRouter');
         $additional = [
@@ -71,5 +74,16 @@ class Component extends BaseComponent implements ComponentInterface, ComponentIn
         ];
         //$FrontendRouter->{'/admin'}->add('cms/*', '@GuzabaPlatform.Cms/CmsAdmin.vue', $additional);// use with this.$route.params.pathMatch
         $FrontendRouter->{'/admin'}->add('cms/page/:page_uuid', '@GuzabaPlatform.Cms/CmsPageAdmin.vue', $additional);// use with this.$route.params.page_group_uuid
+    }
+
+    public static function register_frontend_hooks(): void
+    {
+        /** @var VueComponentHooks $FrontendHooks */
+        $FrontendHooks = self::get_service('FrontendHooks');
+        $FrontendHooks->add(
+            '@GuzabaPlatform.Navigation/components/AddLink.vue',
+            'AfterTabs',
+            '@GuzabaPlatform.Cms/components/hooks/guzaba-platform/navigation/AddLinkPage.vue'
+        );
     }
 }

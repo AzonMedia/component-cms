@@ -37,7 +37,8 @@
                     then(function() {
                         //do nothing - in the finally it will reload the pages & groups
                     }).catch( err => {
-                        this.$parent.show_toast(err.response.data.message);
+                        //this.$parent.show_toast(err.response.data.message);
+                        this.$parent.show_toast(err);
                     }).finally( () => {
                         this.$parent.get_groups_and_pages(this.$parent.page_group_uuid);
                     });
