@@ -51,6 +51,8 @@ class Pages extends BaseController
 
     protected const CONFIG_RUNTIME = [];
 
+    public const PAGE_GROUP_SEPARATOR = '/';
+
     public function main(?string $page_group_uuid = NULL): ResponseInterface
     {
         $struct = [];
@@ -103,5 +105,39 @@ class Pages extends BaseController
         $Page = new Page($page_uuid);//the page & page_uuid are not really needed but for structuring API is better to have it
         $PageContent = new PageContent($page_content_uuid);
         return self::get_structured_ok_response($PageContent);
+    }
+
+    /**
+     * Returns all pages and pages groups in multidimensional array
+     * @return ResponseInterface
+     */
+    public function get_all_pages(): ResponseInterface
+    {
+        $pages = Page::get_data_by( [] );
+        $groups = PageGroup::get_data_by( [], 0, 0, false, 'parent_page_group_id' );
+        $data = [];
+
+        $FindPageGroup = static function(int $page_group_id) use (&$FindPageGroup, $groups): array
+        {
+            
+        };
+
+        foreach ($groups as $group) {
+            if ($group['parent_group_id']) {
+                
+            } else {
+                $data[$group['page_group_name']] = [];
+            }
+        }
+    }
+
+    /**
+     * Returns all pages in two-dimensional array by page groups.
+     * If the page groups are nested in more levels these are flattened to a single group and names separated by self::PAGE_GROUP_SEPARATOR
+     * @return ResponseInterface
+     */
+    public function get_pages_for_navigation(): ResponseInterface
+    {
+
     }
 }

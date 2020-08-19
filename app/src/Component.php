@@ -62,18 +62,21 @@ class Component extends BaseComponent implements ComponentInterface, ComponentIn
             ],
         ];
         $FrontendRouter->{'/admin'}->add('cms', '@GuzabaPlatform.Cms/CmsAdmin.vue' ,$additional);
+        //$FrontendRouter->add('cms', '@GuzabaPlatform.Cms/CmsAdmin.vue' ,$additional);
 
         $additional = [
             'name'  => 'CMS Page Group',
         ];
         //$FrontendRouter->{'/admin'}->add('cms/*', '@GuzabaPlatform.Cms/CmsAdmin.vue', $additional);// use with this.$route.params.pathMatch
         $FrontendRouter->{'/admin'}->add('cms/:page_group_uuid', '@GuzabaPlatform.Cms/CmsAdmin.vue', $additional);// use with this.$route.params.page_group_uuid
+        //$FrontendRouter->add('cms/:page_group_uuid', '@GuzabaPlatform.Cms/CmsAdmin.vue', $additional);// use with this.$route.params.page_group_uuid
 
         $additional = [
             'name'  => 'CMS Page',
         ];
         //$FrontendRouter->{'/admin'}->add('cms/*', '@GuzabaPlatform.Cms/CmsAdmin.vue', $additional);// use with this.$route.params.pathMatch
         $FrontendRouter->{'/admin'}->add('cms/page/:page_uuid', '@GuzabaPlatform.Cms/CmsPageAdmin.vue', $additional);// use with this.$route.params.page_group_uuid
+        //$FrontendRouter->add('cms/page/:page_uuid', '@GuzabaPlatform.Cms/CmsPageAdmin.vue', $additional);// use with this.$route.params.page_group_uuid
     }
 
     public static function register_frontend_hooks(): void

@@ -28,6 +28,8 @@ class Page extends BaseActiveRecord
     protected const CONFIG_DEFAULTS = [
         'main_table' => 'cms_pages',
         'route' => '/admin/cms/page',//to be used for editing and deleting
+
+        'object_name_property'  => 'page_name',//required by BaseActiveRecord::get_object_name_property()
     ];
 
     protected const CONFIG_RUNTIME = [];

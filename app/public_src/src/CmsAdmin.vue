@@ -189,7 +189,7 @@
                 this.DeleteElement.modal_title = 'Delete page group ' + page_group_name;
                 //this.DeleteElement.button_title = 'Delete';
                 this.DeleteElement.name = page_group_name;
-                this.DeleteElement.url = 'admin/cms/page-group/' + page_group_uuid;
+                this.DeleteElement.url = '/admin/cms/page-group/' + page_group_uuid;
                 this.DeleteElement.type = 'Page Group';
                 this.$bvModal.show('delete-element-modal');
             },
@@ -197,7 +197,7 @@
                 this.DeleteElement.modal_title = 'Delete page ' + page_name;
                 //this.DeleteElement.button_title = 'Delete';
                 this.DeleteElement.name = page_name;
-                this.DeleteElement.url = 'admin/cms/page/' + page_uuid;
+                this.DeleteElement.url = '/admin/cms/page/' + page_uuid;
                 this.DeleteElement.type = 'Page';
                 this.$bvModal.show('delete-element-modal');
             },
