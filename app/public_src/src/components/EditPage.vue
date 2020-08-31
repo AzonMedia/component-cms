@@ -69,9 +69,14 @@
         },
         methods: {
             modal_ok_handler(bvModalEvent) {
-                let url = '/admin/cms/page';
+
+                // let url = '/admin/cms/page';
+                // if (this.page_uuid) {
+                //     url = '/admin/cms/page/' + this.page_uuid;
+                // }
+                let url = this.get_route('GuzabaPlatform\\Cms\\Models\\Page:crud_action_create')
                 if (this.page_uuid) {
-                    url = '/admin/cms/page/' + this.page_uuid;
+                    url = this.get_route('GuzabaPlatform\\Cms\\Models\\Page:crud_action_update', this.page_uuid)
                 }
                 let SendValues = {};
                 SendValues.page_name = this.page_name;
@@ -82,7 +87,6 @@
                 SendValues.page_content = this.page_content
                 SendValues.page_slug = this.page_slug
                 let method = this.page_uuid ? 'put' : 'post';
-                //this.$http.post(url, SendValues).
                 this.$http(
                     {
                         method: method,
@@ -108,7 +112,8 @@
             modal_show_handler(bvModalEvent) {
                 //this.page_name = '';
                 if (this.PageData.page_uuid) {
-                    this.$http.get('/admin/cms/page/' + this.PageData.page_uuid)
+                    //this.$http.get('/admin/cms/page/' + this.PageData.page_uuid)
+                    this.$http.get(this.get_route('GuzabaPlatform\\Cms\\Models\\Page:crud_action_read', this.PageData.page_uuid))
                         .then(resp => {
                             this.page_name = resp.data.page_name;
                             this.page_slug = resp.data.page_slug;

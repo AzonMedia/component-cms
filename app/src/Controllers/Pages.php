@@ -23,14 +23,17 @@ class Pages extends BaseController
             '/admin/cms' => [
                 Method::HTTP_GET => [self::class, 'main']
             ],
+            '/admin/cms/{page_group_uuid}' => [
+                Method::HTTP_GET => [self::class, 'main']
+            ],
             '/admin/cms/page-groups' => [
                 Method::HTTP_GET => [self::class, 'page_groups'] //not used by the front end
             ],
             '/admin/cms/pages' => [
                 Method::HTTP_GET => [self::class, 'pages'] // not used by the front end
             ],
-            '/admin/cms/{page_group_uuid}' => [
-                Method::HTTP_GET => [self::class, 'main']
+            '/admin/cms/pages-all' => [
+                Method::HTTP_GET => [self::class, 'all_pages'] // not used by the front end
             ],
             //for retreiving a single page the route set in the Page model is used
             //no - it needs a custom controller because it must show the content revision history
@@ -71,6 +74,13 @@ class Pages extends BaseController
         return self::get_structured_ok_response($struct);
     }
 
+    /**
+     * Returns the pages in the provided $page_group_uuid.
+     * If no $page_group_uuid is provided the pages with no page group will be returned (the root level pages).
+     * @param string|null $page_group_uuid
+     * @return ResponseInterface
+     * @throws \Guzaba2\Base\Exceptions\RunTimeException
+     */
     public function pages(?string $page_group_uuid = NULL): ResponseInterface
     {
         $struct = [];
@@ -111,7 +121,7 @@ class Pages extends BaseController
      * Returns all pages and pages groups in multidimensional array
      * @return ResponseInterface
      */
-    public function get_all_pages(): ResponseInterface
+    public function all_pages(): ResponseInterface
     {
         $pages = Page::get_data_by( [] );
         $groups = PageGroup::get_data_by( [], 0, 0, false, 'parent_page_group_id' );
@@ -136,8 +146,8 @@ class Pages extends BaseController
      * If the page groups are nested in more levels these are flattened to a single group and names separated by self::PAGE_GROUP_SEPARATOR
      * @return ResponseInterface
      */
-    public function get_pages_for_navigation(): ResponseInterface
-    {
-
-    }
+//    public function get_pages_for_navigation(): ResponseInterface
+//    {
+//
+//    }
 }

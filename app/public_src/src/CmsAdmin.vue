@@ -189,7 +189,8 @@
                 this.DeleteElement.modal_title = 'Delete page group ' + page_group_name;
                 //this.DeleteElement.button_title = 'Delete';
                 this.DeleteElement.name = page_group_name;
-                this.DeleteElement.url = '/admin/cms/page-group/' + page_group_uuid;
+                //this.DeleteElement.url = '/admin/cms/page-group/' + page_group_uuid;
+                this.DeleteElement.url = this.get_route('GuzabaPlatform\\Cms\\Models\\PageGroup:crud_action_delete', page_group_uuid);
                 this.DeleteElement.type = 'Page Group';
                 this.$bvModal.show('delete-element-modal');
             },
@@ -197,15 +198,17 @@
                 this.DeleteElement.modal_title = 'Delete page ' + page_name;
                 //this.DeleteElement.button_title = 'Delete';
                 this.DeleteElement.name = page_name;
-                this.DeleteElement.url = '/admin/cms/page/' + page_uuid;
+                //this.DeleteElement.url = '/admin/cms/page/' + page_uuid;
+                this.DeleteElement.url = this.get_route('GuzabaPlatform\\Cms\\Models\\Page:crud_action_delete', page_uuid);
                 this.DeleteElement.type = 'Page';
                 this.$bvModal.show('delete-element-modal');
             },
 
             get_groups_and_pages(page_group_uuid) {
-                console.log(page_group_uuid);
+
                 this.page_group_uuid = page_group_uuid;
-                this.$http.get('/admin/cms/' + page_group_uuid )
+                //this.$http.get('/admin/cms/' + page_group_uuid )
+                this.$http.get( this.get_route('GuzabaPlatform\\Cms\\Controllers\\Pages:main', page_group_uuid) )
                     .then(resp => {
                         this.page_groups = resp.data.page_groups;
                         this.pages = resp.data.pages;

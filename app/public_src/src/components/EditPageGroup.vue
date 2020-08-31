@@ -37,9 +37,13 @@
         },
         methods: {
             modal_ok_handler(bvModalEvent) {
-                let url = '/admin/cms/page-group';
+                // let url = '/admin/cms/page-group';
+                // if (this.PageGroupData.page_group_uuid) {
+                //     url += '/' + this.PageGroupData.page_group_uuid;
+                // }
+                let url = this.get_route('GuzabaPlatform\\Cms\\Models\\PageGroup:crud_action_create')
                 if (this.PageGroupData.page_group_uuid) {
-                    url += '/' + this.PageGroupData.page_group_uuid;
+                    url = this.get_route('GuzabaPlatform\\Cms\\Models\\PageGroup:crud_action_update', this.PageGroupData.page_group_uuid)
                 }
                 let SendValues = {};
                 SendValues.page_group_name = this.page_group_name;
@@ -65,7 +69,6 @@
             },
             modal_show_handler(bvModalEvent) {
                 this.page_group_name = '';
-                console.log('QQQQQQQQQQQQ')
                 if (this.PageGroupData.page_group_name) {
                     this.page_group_name = this.PageGroupData.page_group_name;
                 }
