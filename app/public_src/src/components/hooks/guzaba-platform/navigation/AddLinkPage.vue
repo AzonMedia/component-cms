@@ -1,6 +1,7 @@
 <template>
     <b-tab title="To Page">
         <!-- <p>Page: <v-select v-model="Link.link_class_name" :options="ModelClasses"></v-select></p> -->
+        <CmsAdmin v-bind:EmbeddedData="EmbeddedData"></CmsAdmin>
     </b-tab>
 </template>
 
@@ -10,7 +11,8 @@
     import 'vue-select/dist/vue-select.css'
 
     import ToastMixin from '@GuzabaPlatform.Platform/ToastMixin.js'
-    import BaseMixin from '@GuzabaPlatform.Platform/BaseMixin.js'
+
+    import CmsAdmin from '@GuzabaPlatform.Cms/CmsAdmin.vue'
 
     export default {
         name: "AddLinkPage",
@@ -21,30 +23,17 @@
         // },
         mixins: [
             ToastMixin,
-            BaseMixin,
         ],
-        methods: {
-            /**
-             * Loads the pages from all pages groups
-             */
-            load_pages() {
-
+        data() {
+            return {
+                EmbeddedData: {
+                    //embedded: true,//no need of this... just defining the object and passing it is enough for the check inside CmsAdmin
+                }
             }
         },
-        mounted() {
-
-            // this.$parent.test_method = function () {
-            //     alert('test 2')
-            // }
-            //this.$parent.test_method()
-            //console.log(this.get_template_names())
-            //let AddLink = this.get_parent_component_by_name('AddLink');
-            //console.log(AddLink.$options.name)
-            // let AddLink = this.get_parent_component_by_name('AddLink');
-            // AddLink.test_method = function() { //it is possible to overrive the methods of the component where the hook is defined
-            //     alert('test 2')
-            // }
-        }
+        components: {
+            CmsAdmin
+        },
     }
 </script>
 

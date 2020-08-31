@@ -15,8 +15,14 @@
                     -->
                     <span v-for="(page_group_name, page_group_uuid) in PageGroupPath">/<span class="page-group-path-element" @click="open_page_group(page_group_uuid)">{{page_group_name}}</span></span>
 
-                    <b-button variant="success" @click="new_page()" size="sm">New Page</b-button>
-                    <b-button variant="success" @click="new_group()" size="sm">New Page Group</b-button>
+                    <template v-if="typeof EmbeddedData !== 'undefined'">
+                        <!-- do not show the buttons -->
+                    </template>
+                    <template v-else>
+                        <b-button variant="success" @click="new_page()" size="sm">New Page</b-button>
+                        <b-button variant="success" @click="new_group()" size="sm">New Page Group</b-button>
+                    </template>
+
 
                 </h3>
                 <div class="page-group-path">
@@ -47,6 +53,7 @@
         <DeleteC v-bind:DeleteElement="DeleteElement"></DeleteC>
 
         <!-- display: none in order to suppress anything that may be shown out-of-the-box from this component -->
+        <!-- this component is needed for the permission popups -->
         <CrudC ref="Crud" style="display: none"></CrudC>
     </div>
 
@@ -71,6 +78,9 @@
         mixins: [
             ToastMixin,
         ],
+        props: {
+            EmbeddedData: Object
+        },
         components: {
             PageC,
             PageGroupC,
@@ -138,10 +148,14 @@
             },
 
             open_page_group(page_group_uuid) {
-                if (page_group_uuid) {
-                    this.$router.push('/admin/cms/' + page_group_uuid);
+                if (typeof this.EmbeddedData !== 'undefined') {
+                    this.get_groups_and_pages(page_group_uuid)
                 } else {
-                    this.$router.push('/admin/cms');
+                    if (page_group_uuid) {
+                        this.$router.push('/admin/cms/' + page_group_uuid);
+                    } else {
+                        this.$router.push('/admin/cms');
+                    }
                 }
             },
             open_page(page_uuid) {

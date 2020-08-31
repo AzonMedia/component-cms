@@ -12,7 +12,7 @@
             <div class="col-9" style="text-align: left">
                 <span class="clickable" @click="$parent.open_page_group(PageGroupData.meta_object_uuid)">{{PageGroupData.page_group_name}}</span>
             </div>
-            <div class="col-2">
+            <div class="col-2" v-if="typeof $parent.EmbeddedData === 'undefined' ">
                 <b-icon-list-check
                         v-b-tooltip.hover title="Page group permissions"
                         variant="primary"

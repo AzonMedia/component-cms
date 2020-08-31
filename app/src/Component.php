@@ -79,6 +79,11 @@ class Component extends BaseComponent implements ComponentInterface, ComponentIn
         //$FrontendRouter->add('cms/page/:page_uuid', '@GuzabaPlatform.Cms/CmsPageAdmin.vue', $additional);// use with this.$route.params.page_group_uuid
     }
 
+    /**
+     * Adds a hook to Navigation/AddLink
+     * @throws RunTimeException
+     * @throws \Azonmedia\Exceptions\InvalidArgumentException
+     */
     public static function register_frontend_hooks(): void
     {
         /** @var VueComponentHooks $FrontendHooks */

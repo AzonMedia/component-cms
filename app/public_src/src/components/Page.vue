@@ -14,7 +14,7 @@
                 <div class="col-9" style="text-align: left">
                     <span class="clickable" @click="$parent.open_page(PageData.meta_object_uuid)">{{PageData.page_name}}</span>
                 </div>
-                <div class="col-2">
+                <div class="col-2" v-if="typeof $parent.EmbeddedData === 'undefined' ">
                     <!--
                     <b-icon-list-ol
                             v-b-tooltip.hover title="Page revisions"

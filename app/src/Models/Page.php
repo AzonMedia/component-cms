@@ -63,7 +63,7 @@ class Page extends BaseActiveRecord
         }
 
         if ($this->page_group_id && !$this->is_property_modified('page_group_uuid') ) {
-            $PageGroup = new static($this->page_group_id);
+            $PageGroup = new PageGroup($this->page_group_id);
             $this->page_group_uuid = $PageGroup->get_uuid();
         }
 
@@ -114,13 +114,14 @@ class Page extends BaseActiveRecord
             if ($this->page_group_uuid) {
                 if (GeneralUtil::is_uuid($this->page_group_uuid)) {
                     try {
-                        $PageGroup = new static($this->page_group_uuid);
+                        $PageGroup = new PageGroup($this->page_group_uuid);
                         $this->page_group_id = $PageGroup->get_id();
                     } catch (RecordNotFoundException $Exception) {
                         throw new ValidationFailedException($this, 'page_group_uuid', sprintf(t::_('There is no page group with the provided UUID %s.'), $this->page_group_uuid) );
                     } catch (PermissionDeniedException $Exception) {
                         throw new ValidationFailedException($this, 'page_group_uuid', sprintf(t::_('You are not allowed to read the page group with UUID %s.'), $this->page_group_uuid) );
                     }
+                    //if (!)
                 } else {
                     throw new ValidationFailedException($this, 'page_group_uuid', sprintf(t::_('The provided page group UUID %s is not a valid UUID.'), $this->page_group_uuid) );
                 }
