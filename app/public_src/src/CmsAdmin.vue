@@ -109,6 +109,7 @@
                     url: '',
                     name: '',
                 },
+                highlighted_page_uuid: '',
                 page_group_uuid: '',
                 error_message: '',
                 page_groups: [],
@@ -148,8 +149,9 @@
             },
 
             open_page_group(page_group_uuid) {
-                if (typeof this.EmbeddedData !== 'undefined') {
-                    this.get_groups_and_pages(page_group_uuid)
+                if (typeof this.EmbeddedData !== 'undefined' && typeof this.EmbeddedData.open_page_group === 'function') {
+                    //this.get_groups_and_pages(page_group_uuid)
+                    this.EmbeddedData.open_page_group(this, page_group_uuid)
                 } else {
                     if (page_group_uuid) {
                         this.$router.push('/admin/cms/' + page_group_uuid);
@@ -159,8 +161,13 @@
                 }
             },
             open_page(page_uuid) {
-                //shows a list of page content revisions
-                this.$router.push('/admin/cms/page/' + page_uuid);
+                if (typeof this.EmbeddedData !== 'indefined' && typeof this.EmbeddedData.open_page === 'function') {
+                    this.EmbeddedData.open_page(this, page_uuid)
+                } else {
+                    //shows a list of page content revisions
+                    this.$router.push('/admin/cms/page/' + page_uuid);
+                }
+
             },
 
             edit_page_group(page_group_uuid, page_group_name) {

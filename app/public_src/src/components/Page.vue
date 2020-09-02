@@ -6,7 +6,7 @@
         <b-icon-pencil variant="primary"></b-icon-pencil>
         <b-icon-trash variant="danger"></b-icon-trash>
         -->
-        <div class="container">
+        <div class="container" :class="{ highlighted_element: $parent.highlighted_page_uuid === PageData.meta_object_uuid}">
             <div class="row">
                 <div class="col-1">
                     <b-icon-file-text class="clickable" @click="$parent.open_page(PageData.meta_object_uuid)"></b-icon-file-text>

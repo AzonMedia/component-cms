@@ -24,16 +24,26 @@
         mixins: [
             ToastMixin,
         ],
+        components: {
+            CmsAdmin
+        },
         data() {
             return {
                 EmbeddedData: {
                     //embedded: true,//no need of this... just defining the object and passing it is enough for the check inside CmsAdmin
+                    open_page_group : (CmsAdminC, page_group_uuid) => {
+                        CmsAdminC.get_groups_and_pages(page_group_uuid)
+                    },
+                    open_page : (CmsAdminC, page_uuid) => {
+                        let AddLinkComponent = this.get_parent_component_by_name('AddLink')
+                        AddLinkComponent.Link.link_class_name = 'GuzabaPlatform\\Cms\\Models\\Page'
+                        AddLinkComponent.Link.link_object_uuid = page_uuid
+                        CmsAdminC.highlighted_page_uuid = page_uuid
+                    }
                 }
             }
         },
-        components: {
-            CmsAdmin
-        },
+
     }
 </script>
 
