@@ -35,9 +35,10 @@
                         CmsAdminC.get_groups_and_pages(page_group_uuid)
                     },
                     open_page : (CmsAdminC, page_uuid) => {
-                        let AddLinkComponent = this.get_parent_component_by_name('AddLink')
-                        AddLinkComponent.Link.link_class_name = 'GuzabaPlatform\\Cms\\Models\\Page'
-                        AddLinkComponent.Link.link_object_uuid = page_uuid
+                        let AddLinkC = this.get_parent_component_by_name('AddLink')
+                        AddLinkC.Link.link_class_name = 'GuzabaPlatform\\Cms\\Models\\Page'
+                        AddLinkC.Link.link_object_uuid = page_uuid
+                        AddLinkC.Link.link_name = CmsAdminC.get_page(page_uuid).page_name
                         CmsAdminC.highlighted_page_uuid = page_uuid
                     }
                 }

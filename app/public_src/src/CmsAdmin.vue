@@ -240,6 +240,36 @@
                         this.error_message = err.response.data.message;
                     }).finally(function(){
                     });
+            },
+
+            /**
+             * Returns a PageGroup object or null from the this.pages[] array
+             * @param page_uuid
+             */
+            get_page(page_uuid) {
+                let ret = null
+                for (const el in this.pages) {
+                    if (this.pages[el].meta_object_uuid === page_uuid) {
+                        ret = this.pages[el]
+                        break;
+                    }
+                }
+                return ret;
+            },
+
+            /**
+             * Returns a PageGroup object from the this.pages[] array
+             * @param page_uuid
+             */
+            get_page_group(page_group_uuid) {
+                let ret = null
+                for (const el in this.page_groups) {
+                    if (this.page_groups[el].meta_object_uuid === page_group_uuid) {
+                        ret = this.page_groups[el]
+                        break;
+                    }
+                }
+                return ret;
             }
         },
         watch: {
