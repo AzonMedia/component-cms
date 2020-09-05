@@ -1,12 +1,15 @@
 <?php
+
 declare(strict_types=1);
 
 namespace GuzabaPlatform\Cms;
 
 use Guzaba2\Base\Exceptions\RunTimeException;
+use GuzabaPlatform\Cms\Models\Page;
 use GuzabaPlatform\Components\Base\BaseComponent;
 use GuzabaPlatform\Components\Base\Interfaces\ComponentInitializationInterface;
 use GuzabaPlatform\Components\Base\Interfaces\ComponentInterface;
+use GuzabaPlatform\Platform\Application\ModelFrontendMap;
 use GuzabaPlatform\Platform\Application\VueComponentHooks;
 
 /**
@@ -20,6 +23,7 @@ class Component extends BaseComponent implements ComponentInterface, ComponentIn
         'services'      => [
             'FrontendRouter',
             'FrontendHooks',
+            'ModelFrontendMap'
         ],
     ];
 
@@ -44,7 +48,8 @@ class Component extends BaseComponent implements ComponentInterface, ComponentIn
     {
         self::register_routes();
         self::register_frontend_hooks();
-        return ['register_routes','register_frontend_hooks'];
+        self::register_model_frontend_mappings();
+        return ['register_routes','register_frontend_hooks','register_model_frontend_mappings'];
     }
 
 
@@ -93,5 +98,12 @@ class Component extends BaseComponent implements ComponentInterface, ComponentIn
             'AfterTabs',
             '@GuzabaPlatform.Cms/components/hooks/guzaba-platform/navigation/AddLinkPage.vue'
         );
+    }
+
+    public static function register_model_frontend_mappings(): void
+    {
+        /** @var ModelFrontendMap $ModelFrontendMap */
+        $ModelFrontendMap = self::get_service('ModelFrontendMap');
+        $ModelFrontendMap->add_view_mapping(Page::class, '@GuzabaPlatform.Cms/ViewPage.vue');
     }
 }
