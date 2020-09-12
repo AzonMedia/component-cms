@@ -1,39 +1,43 @@
 <template>
     <b-tab title="To Page">
         <!-- <p>Page: <v-select v-model="Link.link_class_name" :options="ModelClasses"></v-select></p> -->
-        <CmsAdmin v-bind:EmbeddedData="EmbeddedData"></CmsAdmin>
+        <CmsAdminC v-bind:EmbeddedData="EmbeddedData"></CmsAdminC>
     </b-tab>
 </template>
 
 <script>
 
-    import vSelect from 'vue-select'
-    import 'vue-select/dist/vue-select.css'
+    //import vSelect from 'vue-select'
+    //import 'vue-select/dist/vue-select.css'
 
     import ToastMixin from '@GuzabaPlatform.Platform/ToastMixin.js'
 
-    import CmsAdmin from '@GuzabaPlatform.Cms/CmsAdmin.vue'
+    import CmsAdminC from '@GuzabaPlatform.Cms/CmsAdmin.vue'
 
     export default {
         name: "AddLinkPage",
-        // data() {
-        //     return {
-        //         Link : {}
-        //     }
-        // },
         mixins: [
             ToastMixin,
         ],
         components: {
-            CmsAdmin
+            CmsAdminC
         },
         data() {
-            return {
+            return { //the return data contains methods
                 EmbeddedData: {
                     //embedded: true,//no need of this... just defining the object and passing it is enough for the check inside CmsAdmin
+                    /**
+                     * @param Vue CmsAdminC
+                     * @param string page_group_uuid
+                     */
                     open_page_group : (CmsAdminC, page_group_uuid) => {
                         CmsAdminC.get_groups_and_pages(page_group_uuid)
                     },
+                    /**
+                     *
+                     * @param Vue CmsAdminC
+                     * @param string page_uuid
+                     */
                     open_page : (CmsAdminC, page_uuid) => {
                         let AddLinkC = this.get_parent_component_by_name('AddLink')
                         AddLinkC.Link.link_class_name = 'GuzabaPlatform\\Cms\\Models\\Page'
@@ -43,7 +47,7 @@
                     }
                 }
             }
-        },
+        },//end data()
 
     }
 </script>

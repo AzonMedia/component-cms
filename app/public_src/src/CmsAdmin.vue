@@ -161,11 +161,13 @@
                 }
             },
             open_page(page_uuid) {
-                if (typeof this.EmbeddedData !== 'indefined' && typeof this.EmbeddedData.open_page === 'function') {
+
+                if (typeof this.EmbeddedData !== 'undefined' && typeof this.EmbeddedData.open_page === 'function') {
                     this.EmbeddedData.open_page(this, page_uuid)
                 } else {
                     //shows a list of page content revisions
-                    this.$router.push('/admin/cms/page/' + page_uuid);
+                    //this.$router.push('/admin/cms/page/' + page_uuid);
+                    alert('showing revisions is not implemented')
                 }
 
             },
