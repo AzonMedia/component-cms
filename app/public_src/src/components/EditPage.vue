@@ -59,7 +59,9 @@
                 page_content: '',
                 page_group_uuid: '',
                 page_uuid: '',
-                EditorOption: {},
+                EditorOption: {
+
+                },
             };
         },
         computed: {

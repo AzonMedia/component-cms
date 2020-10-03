@@ -205,7 +205,7 @@
                 this.$refs.Crud.selectedClassName = 'GuzabaPlatform\\Cms\\Models\\Page';
                 this.$refs.Crud.selectedObject.meta_object_uuid = page_uuid;
                 this.$refs.Crud.showPermissions(row);
-                this.$refs.Crud.title_permissions = 'Permissions for Page Group "' + page_name + '"';
+                this.$refs.Crud.title_permissions = 'Permissions for Page "' + page_name + '"';
             },
 
             delete_page_group(page_group_uuid, page_group_name) {
