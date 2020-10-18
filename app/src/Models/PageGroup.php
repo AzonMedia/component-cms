@@ -56,6 +56,16 @@ class PageGroup extends BaseActiveRecord
         return $path;
     }
 
+    /**
+     * @return PageGroup|null
+     * @throws InvalidArgumentException
+     * @throws \Azonmedia\Exceptions\InvalidArgumentException
+     * @throws \Guzaba2\Base\Exceptions\LogicException
+     * @throws \Guzaba2\Base\Exceptions\RunTimeException
+     * @throws \Guzaba2\Coroutine\Exceptions\ContextDestroyedException
+     * @throws \Guzaba2\Kernel\Exceptions\ConfigurationException
+     * @throws \ReflectionException
+     */
     public function get_parent_page_group(): ?self
     {
         $ret = NULL;
